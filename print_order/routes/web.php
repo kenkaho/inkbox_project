@@ -22,5 +22,6 @@ Auth::routes();
 Route::get('/profiles', 'ProfilesController@index')->name('profiles');
 
 Route::get('/order/create', 'OrdersController@create');
+Route::post('/order', 'OrdersController@store');
 
 Route::get('/profiles/{user}', 'ProfilesController@index')->name('profiles.show');

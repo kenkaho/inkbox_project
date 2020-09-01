@@ -3,34 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
-use App\Order;
-use App\OrdersItem;
-use DB;
 
-class ProfilesController extends Controller
+class OrdersItemsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($user)
+    public function index()
     {
-	    $user = User::find($user);
-	    $orders = Order::where('customer_id', $user->id)->get();
-
-	    $orderList = [];
-
-	    foreach( $orders as $order ) {
-
-		    $products = DB::table('orders_items')->join('products', 'products.product_id', '=', 'orders_items.product_id')->where('orders_items.order_id', $order->order_id)->get();
-
-		    $orderList[] = [$order,$products];
-	    }
-
-	    return
-		    view('profiles.index', ['user' => $user, 'orders' => $orderList]);
+        //
     }
 
     /**
@@ -62,7 +45,7 @@ class ProfilesController extends Controller
      */
     public function show($id)
     {
-
+        //
     }
 
     /**
