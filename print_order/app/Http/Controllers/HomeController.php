@@ -21,8 +21,8 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index($user)
     {
-        return view('home');
+        return view('profile.index', ['user' => $user]);
     }
 }

@@ -25,3 +25,5 @@ Route::get('/order/create', 'OrdersController@create');
 Route::post('/order', 'OrdersController@store');
 
 Route::get('/profiles/{user}', 'ProfilesController@index')->name('profiles.show');
+
+Route::post('/printOrder', 'PrintOrdersController@store');

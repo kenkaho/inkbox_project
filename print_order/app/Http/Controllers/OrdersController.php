@@ -31,10 +31,6 @@ class OrdersController extends Controller
 		return $productPrices;
 	}
 
-	private function buildOrderItemData(){
-
-	}
-
     /**
      * Display a listing of the resource.
      *
@@ -74,7 +70,6 @@ class OrdersController extends Controller
 			//TODO return an error
 	    }
 
-	    //dd($request->productList);
 	    $orderData = ['order_number' => $orderNumber,
 	                'customer_id' => $customerId,
 	                'total_price' => $orderTotal,
@@ -85,6 +80,7 @@ class OrdersController extends Controller
 
 	    foreach( $productInput as $productId => $qty ){
 		    if($qty != 0) {
+
 			    $orderItems = ['order_id' => $orderId,
 				    'product_id' => $productId,
 				    'quantity' => $qty];
