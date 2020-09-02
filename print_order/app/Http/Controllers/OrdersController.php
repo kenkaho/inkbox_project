@@ -32,7 +32,7 @@ class OrdersController extends Controller
 	}
 
 	private function getProductPosition($items){
-		dd();
+
 	}
 
 	private function buildOrderItemsData($data){
@@ -104,7 +104,7 @@ class OrdersController extends Controller
 	                'customer_id' => $customerId,
 	                'total_price' => $orderTotal,
 	                'order_status' => 'done'];
-	    
+
 	    $data = auth()->user()->orders()->create($orderData);
 	    $orderId = $data->id;
 
@@ -112,7 +112,7 @@ class OrdersController extends Controller
 			$this->saveOrderItems($orderItemData, $orderId);
 		}
 
-	    $this->getProductPosition($orderItemData);
+	    //$this->getProductPosition($orderItemData);
 
 	   return view('profiles.index', ['user' => auth()->user()]);
     }
