@@ -31,6 +31,35 @@ class OrdersController extends Controller
 		return $productPrices;
 	}
 
+	private function getProductPosition($items){
+		dd();
+	}
+
+	private function buildOrderItemsData($data){
+
+		$orderItems = [];
+
+		foreach( $data as $productId => $qty ){
+			if($qty != 0) {
+
+				$orderItems[] = [
+					'product_id' => $productId,
+					'quantity' => $qty
+				];
+			}
+		}
+
+		return $orderItems;
+	}
+
+	private function saveOrderItems($data, $order_id){
+
+		foreach($data as $orderItem){
+			$orderItem['order_id'] = $order_id;
+			OrdersItem::create($orderItem);
+		}
+	}
+
     /**
      * Display a listing of the resource.
      *
@@ -65,6 +94,7 @@ class OrdersController extends Controller
 	    $orderNumber = $latestOrder->order_number + 1;
 	    $customerId = auth()->user()->id;
 	    $orderTotal = $this->calculateOrderTotal($productInput);
+	    $orderItemData = $this->buildOrderItemsData($productInput);
 
 	    if($orderTotal == 0){
 			//TODO return an error
@@ -74,19 +104,16 @@ class OrdersController extends Controller
 	                'customer_id' => $customerId,
 	                'total_price' => $orderTotal,
 	                'order_status' => 'done'];
-
+	    
 	    $data = auth()->user()->orders()->create($orderData);
 	    $orderId = $data->id;
 
-	    foreach( $productInput as $productId => $qty ){
-		    if($qty != 0) {
+		if($orderId && count($orderItemData) !== 0){
+			$this->saveOrderItems($orderItemData, $orderId);
+		}
 
-			    $orderItems = ['order_id' => $orderId,
-				    'product_id' => $productId,
-				    'quantity' => $qty];
-			    OrdersItem::create($orderItems);
-		    }
-	    }
+	    $this->getProductPosition($orderItemData);
+
 	   return view('profiles.index', ['user' => auth()->user()]);
     }
 
