@@ -19,7 +19,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/', function () { return Redirect::to('profiles');});
+//This line need to be fix, but for now just passing the user id, since only 1 user to test
+Route::get('/', function () { return Redirect::to('profiles/1');});
 
 Route::get('/profiles', 'ProfilesController@index')->name('profiles');
 

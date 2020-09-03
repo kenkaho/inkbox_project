@@ -45,39 +45,66 @@ class OrdersController extends Controller
     {
 	    $user = auth()->user();
 	    $productInput = $request->productList;
-	    $latestOrder = Order::latest('order_id')->first();
-	    $orderNumber = $latestOrder->order_number + 1;
 	    $customerId = $user->id;
 	    $orderTotal = $this->calculateOrderTotal($productInput);
 	    $orderItemData = $this->buildOrderItemsData($productInput);
-	    $orders = Order::where('customer_id', $customerId)->get();
+
+	    try {
+		    $latestOrder = Order::latest('order_id')->first();
+		    $order_number = $latestOrder->order_id + 1;
+	    }
+	    catch (\Exception $ex){
+		    dd('Exception block', $ex);
+	    }
+
+	    try {
+		    $orders = Order::where('customer_id', $customerId)->get();
+	    }
+	    catch (\Exception $ex){
+		    dd('Exception block', $ex);
+	    }
 
 	    if($orderTotal == 0){
 			//TODO return an error
 	    }
 
-	    $orderData = ['order_number' => $orderNumber,
+	    $orderData = ['order_number' => $order_number,
 	                'customer_id' => $customerId,
 	                'total_price' => $orderTotal,
 	                'order_status' => 'done'];
+	    try {
+		    $data = $user->orders()->create($orderData);
+	    }
+	    catch (\Exception $ex){
+		    dd('Exception block', $ex);
+	    }
 
-	    $data = auth()->user()->orders()->create($orderData);
 	    $orderId = $data->id;
 
 		if($orderId && count($orderItemData) !== 0){
-			$this->saveOrderItems($orderItemData, $orderId);
+			try {
+				$this->saveOrderItems($orderItemData, $orderId);
+			}
+			catch (\Exception $ex){
+				dd('Exception block', $ex);
+			}
 		}
 
 	    $orderList = [];
 
 	    foreach( $orders as $order ) {
 
-		    $products = DB::table('orders_items')
-			    ->join('products', 'products.product_id', '=', 'orders_items.product_id')
-			    ->where('orders_items.order_id', $order->order_id)
-			    ->get();
+		    try {
+			    $products = DB::table('orders_items')
+				    ->join('products', 'products.product_id', '=', 'orders_items.product_id')
+				    ->where('orders_items.order_id', $order->order_id)
+				    ->get();
 
-		    $orderList[] = [$order,$products];
+			    $orderList[] = [$order, $products];
+		    }
+		    catch (\Exception $ex){
+			    dd('Exception block', $ex);
+		    }
 	    }
 
 	    return redirect('profiles/'.$user->id);
@@ -130,7 +157,13 @@ class OrdersController extends Controller
 
 	private function calculateOrderTotal($data){
 
-		$productPrice = $this->getAllproductPriceWithId();
+		try {
+			$productPrice = $this->getAllproductPriceWithId();
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
+
 		$orderTotal = 0;
 		foreach( $data as $productId => $productQty){
 			$orderTotal += $productPrice[$productId] * $productQty;
@@ -140,7 +173,13 @@ class OrdersController extends Controller
 	}
 
 	private function getAllproductPriceWithId(){
-		$products = Product::all();
+
+		try {
+			$products = Product::all();
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
 
 		foreach($products as $key => $product){
 			$productPrices[$products[$key]->product_id] = $products[$key]->price;
@@ -170,8 +209,13 @@ class OrdersController extends Controller
 	private function saveOrderItems($data, $order_id){
 
 		foreach($data as $orderItem){
-			$orderItem['order_id'] = $order_id;
-			OrdersItem::create($orderItem);
+			try {
+				$orderItem['order_id'] = $order_id;
+				OrdersItem::create($orderItem);
+			}
+			catch (\Exception $ex){
+				dd('Exception block', $ex);
+			}
 		}
 	}
 }

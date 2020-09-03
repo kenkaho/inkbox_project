@@ -27,22 +27,39 @@ class PrintOrdersController extends Controller
      */
     public function store(Request $request)
     {
-	    $userId = auth()->user()->id;
+	    try {
+		    $orderItems = OrdersItem::where('order_id', $request->order_id)->get();
+	    }
+	    catch (\Exception $ex){
+		    dd('Exception block', $ex);
+	    }
 
-	    $orderItems = OrdersItem::where('order_id', $request->order_id)->get();
+	    $orderNumber = $request->order_number;
 
 	    $orderItemsIds = $orderItems->pluck('order_item_id');
 
-	    $printSheetItems = DB::table('print_sheet_item')->whereIn('order_item_id', $orderItemsIds)->get();
+	    try {
+		    $printSheetItems = DB::table('print_sheet_item')->whereIn('order_item_id', $orderItemsIds)->get();
+	    }
+	    catch (\Exception $ex){
+		    dd('Exception block', $ex);
+	    }
 
 	    $sheetItems = [];
 
-	    //Save if no print shee item found
+	    //Save record if no print sheet item is found
 	    if(count($printSheetItems) === 0){
-		    $psid = DB::table('print_sheet')->insertGetId(
-			    array('type' => 'ecom',
-				    'sheet_url' => '')
-		    );
+
+		    try {
+			    $psid = DB::table('print_sheet')->insertGetId(
+				    array('type' => 'ecom',
+					    'sheet_url' => '')
+			    );
+		    }
+		    catch (\Exception $ex){
+			    dd('Exception block', $ex);
+		    }
+
 		    $orderItemData = $this->buildOrderItemsData($orderItems);
 
 		    $sheets = $this->buildPrintSheetData($orderItemData);
@@ -51,8 +68,13 @@ class PrintOrdersController extends Controller
 		    foreach ($sheets as $key => $sheet) {
 
 			    foreach ($sheet as $printSheetItem) {
+
+				    $productTitle = $this->getProductTitleByOrderItemId($printSheetItem['order_item_id']);
+
 				    $tempSheet = $printSheetItem;
 				    $tempSheet['size'] = $printSheetItem['width'] . "x" . $printSheetItem['height'];
+				    $tempSheet['productTitle'] = $productTitle;
+
 				    $sheetItems[] = $tempSheet;
 
 				    $printSheetItem['ps_id'] = $psid;
@@ -60,27 +82,42 @@ class PrintOrdersController extends Controller
 				    $printSheetItem['identifier'] = $identifier;
 				    $printSheetItem['size'] = $tempSheet['size'];
 
-				    DB::table('print_sheet_item')->insertGetId($printSheetItem);
+				    try {
+					    DB::table('print_sheet_item')->insertGetId($printSheetItem);
+				    }
+				    catch (\Exception $ex){
+					    dd('Exception block', $ex);
+				    }
 			    }
 			    $identifier++;
 			    $sheetsResult[] = $sheetItems;
 		    }
 
-		    return view('prints.index',['sheets' => $sheetsResult]);
+		    return view('prints.index',['sheets' => $sheetsResult, 'orderNumber' => $orderNumber]);
 	    }
 	    else {
 
-		    $printSheetItems = DB::table('print_sheet_item')->whereIn('order_item_id', $orderItemsIds)->get();
+			try {
+				$printSheetItems = DB::table('print_sheet_item')->join('orders_items', 'print_sheet_item.order_item_id', '=', 'orders_items.order_item_id')->whereIn('print_sheet_item.order_item_id', $orderItemsIds)->get();
+
+			}
+			catch (\Exception $ex){
+				dd('Exception block', $ex);
+			}
 
 		    foreach($printSheetItems as $printSheetItem){
+
+			    $productTitle = $this->getProductTitleById($printSheetItem->product_id);
+
 			    $Sheets[$printSheetItem->identifier][] = ['x_pos' => $printSheetItem->x_pos,
 				    'y_pos' => $printSheetItem->y_pos,
 				    'width' => $printSheetItem->width,
 				    'height' => $printSheetItem->height,
-				    'size' => $printSheetItem->size];
+				    'size' => $printSheetItem->size,
+			        'productTitle' => $productTitle];
 		    }
 
-		    return view('prints.index',['sheets' => $Sheets]);
+		    return view('prints.index',['sheets' => $Sheets, 'orderNumber' => $orderNumber]);
 	    }
     }
 
@@ -119,7 +156,12 @@ class PrintOrdersController extends Controller
     }
 
 	private function getAllproductSizeWithId(){
-		$products = Product::all();
+		try {
+			$products = Product::all();
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
 
 		foreach($products as $key => $product){
 			$productSizes[$products[$key]->product_id] = $products[$key]->size;
@@ -127,6 +169,36 @@ class PrintOrdersController extends Controller
 
 		return $productSizes;
 	}
+
+	private function getProductTitleById($id){
+
+		try {
+			$product = Product::where('product_id', '=', $id)->firstOrFail();
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
+
+		$productTitle = $product->title;
+
+		return $productTitle;
+	}
+
+	/**
+	 *
+	 * This function will construct the print sheet items data with the x_pos, y_pos, width and height for each
+	 * print sheet item to be insert into the print_sheet_item table
+	 *
+	 * The idea: To insert the largest boxes first then work all the way down to the smaller boxes since the smaller
+	 * boxes will be easier to find a spot to fit in.  This function will also automatically put the remaining boxes
+	 * into a new sheet if the previous sheet can not fit the rest of the boxes.
+	 *
+	 * This algorithm can be improve more to have less loops and code, but with the time I have just come up with
+	 * this naive solution but it seems it will cover most of the cases.
+	 *
+	 * @param $data
+	 * @return array
+	 */
 
 	private function orderSheetProductPosition($data){
 		$tempGrid = array_fill(0, 10, array_fill(0, 15, ''));
@@ -403,7 +475,12 @@ class PrintOrdersController extends Controller
 
 	private function buildPrintSheetData($items){
 
-		$productSizes = $this->getAllproductSizeWithId();
+		try {
+			$productSizes = $this->getAllproductSizeWithId();
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
 
 		$boxes = [];
 
@@ -418,11 +495,17 @@ class PrintOrdersController extends Controller
 		$remainingBox = $boxes;
 
 		while(count($remainingBox) != 0) {
-			$result = $this->orderSheetProductPosition($remainingBox);
+
+			try {
+				$result = $this->orderSheetProductPosition($remainingBox);
+			}
+			catch (\Exception $ex){
+				dd('Exception block', $ex);
+			}
+
 			$sheet = $result['result'];
 			$sheets[] = $sheet;
 			$remainingBox = $result['remainingBox'];
-
 		}
 
 		return $sheets;
@@ -444,5 +527,17 @@ class PrintOrdersController extends Controller
 		}
 
 		return $orderItems;
+	}
+
+	private function getProductTitleByOrderItemId($id){
+		try {
+			$productData = DB::table('orders_items')->join('products', 'orders_items.product_id', '=', 'products.product_id')->where('orders_items.order_item_id', $id)->get();
+
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
+
+		return $productData[0]->title;
 	}
 }

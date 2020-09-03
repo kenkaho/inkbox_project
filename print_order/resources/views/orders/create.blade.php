@@ -21,12 +21,10 @@
                                         <strong>{{ $message }}</strong>
                                 </span>
                                 @enderror
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="10">10</option>
+                                    @for ($i=0; $i <=20; $i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+
                                 </select>
                             </div>
                         @endforeach
