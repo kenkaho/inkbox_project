@@ -16,8 +16,9 @@ class ProductSeeder extends Seeder
         $types = ['online','store'];
         $states = ['active','inactive'];
 
-        foreach($productSize as $size){
+        foreach($productSize as $key => $size){
             factory(App\Product::class, 1)->create([
+            	'title' => 'p'.$key,
                 'type' => $types[array_rand($types)],
                 'size' => $size,
                 'handle' => Str::random(75),

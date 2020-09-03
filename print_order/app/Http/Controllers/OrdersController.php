@@ -50,8 +50,15 @@ class OrdersController extends Controller
 	    $orderItemData = $this->buildOrderItemsData($productInput);
 
 	    try {
-		    $latestOrder = Order::latest('order_id')->first();
-		    $order_number = $latestOrder->order_id + 1;
+
+		    if(count(Order::all()) === 0){
+			    $order_number = '000001';
+		    }
+		    else{
+			    $latestOrder = Order::latest('order_id')->first();
+			    $order_number = $latestOrder->order_id + 1;
+		    }
+
 	    }
 	    catch (\Exception $ex){
 		    dd('Exception block', $ex);

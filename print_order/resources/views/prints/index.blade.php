@@ -11,7 +11,7 @@
             <div class="wrapper">
                 @foreach( $sheet as $list )
                     <div style="grid-area:{{ $list['y_pos'] }} / {{ $list['x_pos'] }} / span {{ $list['height'] }} / span {{ $list['width'] }};" >
-                        {{ $list['productTitle'] . ' (' . $list['size'].')' }}
+                        {{ $list['productTitle'] }}
                     </div>
                 @endforeach
             </div>
