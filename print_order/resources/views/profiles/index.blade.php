@@ -20,6 +20,7 @@
                                         <form action="/printOrder" method="post">
                                             @csrf
                                             <input id="order_id" name="order_id" type="hidden" value="{{$order[0]->order_id}}">
+                                            <input id="order_number" name="order_number" type="hidden" value="{{$order[0]->order_number}}">
                                             <button class="btn-primary" type="submit">Print Order</button>
                                         </form>
                                     </div>

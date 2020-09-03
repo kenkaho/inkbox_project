@@ -80,8 +80,7 @@ class OrdersController extends Controller
 		    $orderList[] = [$order,$products];
 	    }
 
-
-	   return view('profiles.index', ['user' => $user, 'orders' => $orderList]);
+	    return redirect('profiles/'.$user->id);
     }
 
     /**
