@@ -19,6 +19,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get('/', function () { return Redirect::to('profiles');});
+
 Route::get('/profiles', 'ProfilesController@index')->name('profiles');
 
 Route::get('/order/create', 'OrdersController@create');
@@ -26,4 +28,5 @@ Route::post('/order', 'OrdersController@store');
 
 Route::get('/profiles/{user}', 'ProfilesController@index')->name('profiles.show');
 
+Route::get('/printOrder', 'PrintOrdersController@index');
 Route::post('/printOrder', 'PrintOrdersController@store');

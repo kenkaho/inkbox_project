@@ -2,63 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\OrdersItem;
 use Illuminate\Http\Request;
-use App\Product;
 use App\Order;
+use App\OrdersItem;
+use App\Product;
+use DB;
+
 
 class OrdersController extends Controller
 {
 
-	private function calculateOrderTotal($data){
 
-		$productPrice = $this->getAllproductPriceWithId();
-		$orderTotal = 0;
-		foreach( $data as $productId => $productQty){
-			$orderTotal += $productPrice[$productId] * $productQty;
-		}
-
-		return $orderTotal;
-	}
-
-	private function getAllproductPriceWithId(){
-		$products = Product::all();
-
-		foreach($products as $key => $product){
-			$productPrices[$products[$key]->product_id] = $products[$key]->price;
-		}
-
-		return $productPrices;
-	}
-
-	private function getProductPosition($items){
-
-	}
-
-	private function buildOrderItemsData($data){
-
-		$orderItems = [];
-
-		foreach( $data as $productId => $qty ){
-			if($qty != 0) {
-
-				$orderItems[] = [
-					'product_id' => $productId,
-					'quantity' => $qty
-				];
-			}
-		}
-
-		return $orderItems;
-	}
-
-	private function saveOrderItems($data, $order_id){
-
-		foreach($data as $orderItem){
-			$orderItem['order_id'] = $order_id;
-			OrdersItem::create($orderItem);
-		}
-	}
 
     /**
      * Display a listing of the resource.
@@ -89,12 +43,14 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
+	    $user = auth()->user();
 	    $productInput = $request->productList;
 	    $latestOrder = Order::latest('order_id')->first();
 	    $orderNumber = $latestOrder->order_number + 1;
 	    $customerId = auth()->user()->id;
 	    $orderTotal = $this->calculateOrderTotal($productInput);
 	    $orderItemData = $this->buildOrderItemsData($productInput);
+	    $orders = Order::where('customer_id', $user->id)->get();
 
 	    if($orderTotal == 0){
 			//TODO return an error
@@ -112,9 +68,20 @@ class OrdersController extends Controller
 			$this->saveOrderItems($orderItemData, $orderId);
 		}
 
-	    //$this->getProductPosition($orderItemData);
+	    $orderList = [];
 
-	   return view('profiles.index', ['user' => auth()->user()]);
+	    foreach( $orders as $order ) {
+
+		    $products = DB::table('orders_items')
+			    ->join('products', 'products.product_id', '=', 'orders_items.product_id')
+			    ->where('orders_items.order_id', $order->order_id)
+			    ->get();
+
+		    $orderList[] = [$order,$products];
+	    }
+
+
+	   return view('profiles.index', ['user' => $user, 'orders' => $orderList]);
     }
 
     /**
@@ -161,4 +128,51 @@ class OrdersController extends Controller
     {
         //
     }
+
+	private function calculateOrderTotal($data){
+
+		$productPrice = $this->getAllproductPriceWithId();
+		$orderTotal = 0;
+		foreach( $data as $productId => $productQty){
+			$orderTotal += $productPrice[$productId] * $productQty;
+		}
+
+		return $orderTotal;
+	}
+
+	private function getAllproductPriceWithId(){
+		$products = Product::all();
+
+		foreach($products as $key => $product){
+			$productPrices[$products[$key]->product_id] = $products[$key]->price;
+		}
+
+		return $productPrices;
+	}
+
+
+	private function buildOrderItemsData($data){
+
+		$orderItems = [];
+
+		foreach( $data as $productId => $qty ){
+			if($qty != 0) {
+
+				$orderItems[] = [
+					'product_id' => $productId,
+					'quantity' => $qty
+				];
+			}
+		}
+
+		return $orderItems;
+	}
+
+	private function saveOrderItems($data, $order_id){
+
+		foreach($data as $orderItem){
+			$orderItem['order_id'] = $order_id;
+			OrdersItem::create($orderItem);
+		}
+	}
 }

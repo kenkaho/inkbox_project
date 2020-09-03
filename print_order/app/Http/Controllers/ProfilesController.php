@@ -29,7 +29,10 @@ class ProfilesController extends Controller
 
 	    foreach( $orders as $order ) {
 
-		    $products = DB::table('orders_items')->join('products', 'products.product_id', '=', 'orders_items.product_id')->where('orders_items.order_id', $order->order_id)->get();
+		    $products = DB::table('orders_items')
+			    ->join('products', 'products.product_id', '=', 'orders_items.product_id')
+			    ->where('orders_items.order_id', $order->order_id)
+			    ->get();
 
 		    $orderList[] = [$order,$products];
 	    }

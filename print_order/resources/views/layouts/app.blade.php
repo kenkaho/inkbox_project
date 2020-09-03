@@ -18,6 +18,31 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <style>
+        * {box-sizing: border-box;}
+        .wrapper {
+            border: 2px solid #f76707;
+            border-radius: 5px;
+            background-color: #fff4e6;
+        }
+
+        .wrapper > div {
+            border: 2px solid #ffa94d;
+            border-radius: 5px;
+            background-color: #ffd8a8;
+            padding: 1em;
+            color: #d9480f;
+        }
+        .wrapper {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-auto-rows: 100px;
+            grid-template-rows: repeat(15, 1fr);
+            grid-gap: 10px;
+            grid-auto-flow: dense;
+        }
+
+    </style>
 </head>
 <body>
     <div id="app">
