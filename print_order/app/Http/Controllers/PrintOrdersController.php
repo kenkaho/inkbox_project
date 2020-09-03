@@ -45,42 +45,42 @@ class PrintOrdersController extends Controller
 		    );
 		    $orderItemData = $this->buildOrderItemsData($orderItems);
 
-		    $printSheetItemData = $this->buildPrintSheetData($orderItemData);
+		    $sheets = $this->buildPrintSheetData($orderItemData);
+		    $identifier = 0;
 
-		    foreach($printSheetItemData as $printSheetItem){
-			    $tempSheet = $printSheetItem;
-			    $tempSheet['size'] = $printSheetItem['width'] ."x" . $printSheetItem['height'];
-			    $sheetItems[] = $tempSheet;
+		    foreach ($sheets as $key => $sheet) {
 
-			    $printSheetItem['ps_id'] = $psid;
-			    $printSheetItem['image_url'] = '';
-			    $printSheetItem['identifier'] = '0';
-			    $printSheetItem['size'] = $tempSheet['size'];
+			    foreach ($sheet as $printSheetItem) {
+				    $tempSheet = $printSheetItem;
+				    $tempSheet['size'] = $printSheetItem['width'] . "x" . $printSheetItem['height'];
+				    $sheetItems[] = $tempSheet;
 
-			    DB::table('print_sheet_item')->insertGetId($printSheetItem);
+				    $printSheetItem['ps_id'] = $psid;
+				    $printSheetItem['image_url'] = '';
+				    $printSheetItem['identifier'] = $identifier;
+				    $printSheetItem['size'] = $tempSheet['size'];
+
+				    DB::table('print_sheet_item')->insertGetId($printSheetItem);
+			    }
+			    $identifier++;
+			    $sheetsResult[] = $sheetItems;
 		    }
 
-		    $sheets[0] = $sheetItems;
-
-
-		    return view('prints.index',['sheets' => $sheets]);
+		    return view('prints.index',['sheets' => $sheetsResult]);
 	    }
 	    else {
 
 		    $printSheetItems = DB::table('print_sheet_item')->whereIn('order_item_id', $orderItemsIds)->get();
 
 		    foreach($printSheetItems as $printSheetItem){
-			    $SheetItems[] = ['x_pos' => $printSheetItem->x_pos,
+			    $Sheets[$printSheetItem->identifier][] = ['x_pos' => $printSheetItem->x_pos,
 				    'y_pos' => $printSheetItem->y_pos,
 				    'width' => $printSheetItem->width,
 				    'height' => $printSheetItem->height,
 				    'size' => $printSheetItem->size];
 		    }
 
-		    $Sheets[0] = $SheetItems;
-
 		    return view('prints.index',['sheets' => $Sheets]);
-
 	    }
     }
 
@@ -131,17 +131,19 @@ class PrintOrdersController extends Controller
 	private function orderSheetProductPosition($data){
 		$tempGrid = array_fill(0, 10, array_fill(0, 15, ''));
 		$result = [];
+		$remainingBox = $data;
 
-		foreach ($data as $box){
+
+		foreach ($data as $key => $box){
 			for ($i=0; $i <10; $i++){
 				for ($j=0; $j<15; $j++) {
 
 					if($box['size'] === '2x5') {
 
-						if ($tempGrid[$i][$j] == ''){
-							if(!isset($tempGrid[$i + 1][$j]) ||
-								!isset($tempGrid[$i][$j+4]) ||
-								!isset($tempGrid[$i + 1][$j + 4])){
+						if (isset($tempGrid[$i][$j]) && $tempGrid[$i][$j] == '' ){
+							if(!isset($tempGrid[$i][$j+4]) ||
+								!isset($tempGrid[$i+1][$j]) ||
+								!isset($tempGrid[$i+4][$j+4])){
 								$i = $i + 1;
 							}
 							else if (
@@ -171,6 +173,7 @@ class PrintOrdersController extends Controller
 									'width' => 5,
 									'height' => 2,
 									'order_item_id' => $box['order_item_id']];
+								unset($remainingBox[$key]);
 								break 2;
 							}
 						}
@@ -179,16 +182,16 @@ class PrintOrdersController extends Controller
 			}
 		}
 
-		foreach ($data as $box){
+		foreach ($data as $key => $box){
 			for ($i=0; $i <10; $i++){
 				for ($j=0; $j<15; $j++) {
 
 					if($box['size'] === '5x2') {
 
-						if ($tempGrid[$i][$j] == ''){
+						if (isset($tempGrid[$i][$j]) && $tempGrid[$i][$j] == ''){
 							if(!isset($tempGrid[$i + 4][$j]) ||
 								!isset($tempGrid[$i][$j+1]) ||
-								!isset($tempGrid[$i + 4][$j + 1])){
+								!isset($tempGrid[$i+4][$j+4])){
 								$i = $i + 1;
 							}
 							else if (
@@ -218,6 +221,7 @@ class PrintOrdersController extends Controller
 									'width' => 2,
 									'height' => 5,
 									'order_item_id' => $box['order_item_id']];
+								unset($remainingBox[$key]);
 								break 2;
 							}
 						}
@@ -226,13 +230,13 @@ class PrintOrdersController extends Controller
 			}
 		}
 
-		foreach ($data as $box){
+		foreach ($data as $key => $box){
 			for ($i=0; $i <10; $i++){
 				for ($j=0; $j<15; $j++) {
 
 					if($box['size'] === '4x4') {
 
-						if ($tempGrid[$i][$j] == ''){
+						if (isset($tempGrid[$i][$j]) && $tempGrid[$i][$j] == '' ){
 							if(!isset($tempGrid[$i + 3][$j]) ||
 								!isset($tempGrid[$i][$j+3]) ||
 								!isset($tempGrid[$i + 3][$j + 3])){
@@ -277,6 +281,7 @@ class PrintOrdersController extends Controller
 									'width' => 4,
 									'height' => 4,
 									'order_item_id' => $box['order_item_id']];
+								unset($remainingBox[$key]);
 								break 2;
 							}
 						}
@@ -285,13 +290,13 @@ class PrintOrdersController extends Controller
 			}
 		}
 
-		foreach ($data as $box){
+		foreach ($data as $key => $box){
 			for ($i=0; $i <10; $i++){
 				for ($j=0; $j<15; $j++) {
 
 					if($box['size'] === '3x3') {
 
-						if ($tempGrid[$i][$j] == ''){
+						if (isset($tempGrid[$i][$j]) && $tempGrid[$i][$j] == ''){
 							if(!isset($tempGrid[$i + 2][$j]) ||
 								!isset($tempGrid[$i][$j+2]) ||
 								!isset($tempGrid[$i + 2][$j + 2])){
@@ -322,6 +327,7 @@ class PrintOrdersController extends Controller
 										'width' => 3,
 										'height' => 3,
 										'order_item_id' => $box['order_item_id']];
+								unset($remainingBox[$key]);
 								break 2;
 							}
 						}
@@ -330,12 +336,12 @@ class PrintOrdersController extends Controller
 			}
 		}
 
-		foreach ($data as $box){
+		foreach ($data as $key => $box){
 			for ($i=0; $i <10; $i++){
 				for ($j=0; $j<15; $j++) {
 
 					if($box['size'] === '2x2') {
-						if ($tempGrid[$i][$j] == ''){
+						if (isset($tempGrid[$i][$j]) && $tempGrid[$i][$j] == '' ){
 							if(!isset($tempGrid[$i + 1][$j]) ||
 								!isset($tempGrid[$i][$j+1]) ||
 								!isset($tempGrid[$i + 1][$j + 1])){
@@ -355,6 +361,7 @@ class PrintOrdersController extends Controller
 									'width' => 2,
 									'height' => 2,
 									'order_item_id' => $box['order_item_id']];
+								unset($remainingBox[$key]);
 								break 2;
 							}
 						}
@@ -363,12 +370,12 @@ class PrintOrdersController extends Controller
 			}
 		}
 
-		foreach ($data as $box){
+		foreach ($data as $key => $box){
 			for ($i=0; $i <10; $i++){
 				for ($j=0; $j<15; $j++) {
 
 					if($box['size'] === '1x1'){
-						if($tempGrid[$i][$j] == '') {
+						if(isset($tempGrid[$i][$j]) && $tempGrid[$i][$j] == '' ) {
 							$tempGrid[$i][$j] = 'x';
 
 							$result[] = ['x_pos' => $i + 1,
@@ -376,14 +383,16 @@ class PrintOrdersController extends Controller
 								'width' => 1,
 								'height' => 1,
 								'order_item_id' => $box['order_item_id']];
+							unset($remainingBox[$key]);
 							break 2;
 						}
 					}
 				}
 			}
 		}
+		$resultObject = ['result'=>$result,'remainingBox' => $remainingBox];
 
-		return $result;
+		return $resultObject;
 	}
 
 	/**
@@ -405,8 +414,18 @@ class PrintOrdersController extends Controller
 							'order_item_id' => $item['order_item_id']];
 			}
 		}
-		$result = $this->orderSheetProductPosition($boxes);
-		return $result;
+
+		$remainingBox = $boxes;
+
+		while(count($remainingBox) != 0) {
+			$result = $this->orderSheetProductPosition($remainingBox);
+			$sheet = $result['result'];
+			$sheets[] = $sheet;
+			$remainingBox = $result['remainingBox'];
+
+		}
+
+		return $sheets;
 	}
 
 	private function buildOrderItemsData($data){
@@ -426,5 +445,4 @@ class PrintOrdersController extends Controller
 
 		return $orderItems;
 	}
-
 }

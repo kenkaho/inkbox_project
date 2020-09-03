@@ -24,6 +24,7 @@
             border: 2px solid #f76707;
             border-radius: 5px;
             background-color: #fff4e6;
+            margin-bottom: 20px;
         }
 
         .wrapper > div {

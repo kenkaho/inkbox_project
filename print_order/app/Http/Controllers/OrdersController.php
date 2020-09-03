@@ -47,10 +47,10 @@ class OrdersController extends Controller
 	    $productInput = $request->productList;
 	    $latestOrder = Order::latest('order_id')->first();
 	    $orderNumber = $latestOrder->order_number + 1;
-	    $customerId = auth()->user()->id;
+	    $customerId = $user->id;
 	    $orderTotal = $this->calculateOrderTotal($productInput);
 	    $orderItemData = $this->buildOrderItemsData($productInput);
-	    $orders = Order::where('customer_id', $user->id)->get();
+	    $orders = Order::where('customer_id', $customerId)->get();
 
 	    if($orderTotal == 0){
 			//TODO return an error
