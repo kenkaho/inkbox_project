@@ -13,7 +13,7 @@ class OrderSeeder extends Seeder
     {
 	   for($i=0; $i<=50; $i++){
 		   DB::table('orders')->insert([
-			    'order_number' => $i,
+			    'order_number' => $i+1,
 			    'customer_id' => 1,
 			    'total_price' => 0,
 			    'order_status' => '',
