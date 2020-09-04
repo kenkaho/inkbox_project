@@ -2,7 +2,7 @@
 
 I have installed the auth feature for Laravel to practice the auth flow, therefore it will ask to log in before you are able to hit the home page.
 
-Create a new user, then it should redirect you to http://localhost:8000/profiles/1
+Create a new user, then it should redirect you to http://localhost:8000/profiles/1 if not please hit the home page with the link.
 
 At the user home page I have display the list of orders that created by the user, I have created the seeder to import 50 orders and order items with it,
 therefore you should see 50 orders on this page.  Hit add orders to create additional order with the set products that created from the product seeder.  
