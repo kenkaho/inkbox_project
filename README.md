@@ -4,9 +4,9 @@ I have installed the auth feature for Laravel to practice the auth flow, therefo
 
 Create a new user, then it should redirect you to http://localhost:8000/profiles/1
 
-At the user home page I have display the list of orders that created by the user, it should be empty currently.  
-Hit add orders to create an order with the set products that created from the product seeder.  The product's size 
-is based on the assignment requirement.  Select the qty for the product you wish to add to the order.  0 qty is accpetable 
+At the user home page I have display the list of orders that created by the user, I have created the seeder to import 50 orders and order items with it,
+therefore you should see 50 orders on this page.  Hit add orders to create additional order with the set products that created from the product seeder.  
+The product's size is based on the assignment requirement.  Select the qty for the product you wish to add to the order.  0 qty is accpetable 
 but the product will not add to the database.
 
 Once submitted the order it will redirect the user back to the home page which is the order listing page.  On each order listing, 
