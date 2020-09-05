@@ -22,6 +22,11 @@ class ProfilesController extends Controller
      */
     public function index($user)
     {
+	    if($user != auth()->user()->id){
+
+		    return view('welcome');
+	    }
+
 	    $user = User::find($user);
 	    $orders = Order::where('customer_id', $user->id)->orderBy('created_at', 'DESC')->get();
 
