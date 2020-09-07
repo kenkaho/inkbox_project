@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b30be706-c94c-4c4e-b6bb-3de0cf2f8d14" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/print_order/app/Http/Controllers/PrintOrdersController.php" afterPath="$PROJECT_DIR$/print_order/app/Http/Controllers/PrintOrdersController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/print_order/resources/views/layouts/app.blade.php" afterPath="$PROJECT_DIR$/print_order/resources/views/layouts/app.blade.php" />
     </list>
     <ignored path="inkbox_project.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -93,8 +93,8 @@
       <file leaf-file-name="app.blade.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/print_order/resources/views/layouts/app.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
-              <caret line="38" column="49" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
+            <state relative-caret-position="135">
+              <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -605,12 +605,12 @@
       <workItem from="1599309711539" duration="3351000" />
       <workItem from="1599362418114" duration="2466000" />
       <workItem from="1599366274431" duration="5424000" />
-      <workItem from="1599446786562" duration="3154000" />
+      <workItem from="1599446786562" duration="3997000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105572000" />
+    <option name="totallyTimeSpent" value="106415000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="827" extended-state="6" />
@@ -1012,8 +1012,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/print_order/resources/views/layouts/app.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="38" column="49" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
+        <state relative-caret-position="135">
+          <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
           <folding />
         </state>
       </provider>

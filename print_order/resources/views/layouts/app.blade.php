@@ -25,6 +25,8 @@
             border-radius: 5px;
             background-color: #fff4e6;
             margin-bottom: 20px;
+            width:595px;
+            height:895px;
         }
 
         .wrapper > div {
@@ -36,9 +38,9 @@
         }
         .wrapper {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
+            grid-template-columns: repeat(10, 50px);
             grid-auto-rows: 100px;
-            grid-template-rows: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 50px);
             grid-gap: 10px;
             grid-auto-flow: dense;
         }
