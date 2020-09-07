@@ -206,7 +206,7 @@ class PrintOrdersController extends Controller
 
 		if(!isset($board[$i][$j+$sizes[$size][1]]) ||
 			!isset($board[$i+$sizes[$size][0]][$j]) ||
-			!isset($board[$i+$sizes[$size][1]][$j+$sizes[$size][1]])
+			!isset($board[$i+$sizes[$size][0]][$j+$sizes[$size][1]])
 		){
 			return true;
 		}
@@ -291,7 +291,7 @@ class PrintOrdersController extends Controller
 	}
 
 	private function orderSheetProductPosition($data,$boardWidth=10,$boardHeight=15){
-		$board = array_fill(0, 10, array_fill(0, 15, ''));
+		$board = array_fill(0, $boardWidth, array_fill(0, $boardHeight, ''));
 		$result = [];
 		$remainingBox = $data;
 
@@ -304,7 +304,7 @@ class PrintOrdersController extends Controller
 				for ($j=0; $j<$boardHeight; $j++) {
 
 					if($box['size'] === '1x1'){
-						if(isset($board[$i][$j]) && $board[$i][$j] == '' ) {
+						if(isset($board[$i][$j]) && $board[$i][$j] == '') {
 							$board[$i][$j] = 'x';
 
 							$result[] = ['x_pos' => $i + 1,
@@ -324,8 +324,8 @@ class PrintOrdersController extends Controller
 
 						if (isset($board[$i][$j]) && $board[$i][$j] == '') {
 
-							if ($isOffBound == true || $board[$i][$j] != '') {
-								$i = $i + 1;
+							if ($isOffBound == true) {
+								$j = $j + 1;
 							} else if ( $isSlotAvailable['isAvailable'] === true ) {
 								$fillPositions = $isSlotAvailable['positions'];
 
@@ -371,6 +371,7 @@ class PrintOrdersController extends Controller
 
 		$boxes = [];
 
+
 		foreach($items as $item) {
 			$qty = $item['quantity'];
 			for ($i=0; $i < $qty; $i++){
@@ -379,7 +380,8 @@ class PrintOrdersController extends Controller
 			}
 		}
 
-		$remainingBox = $boxes;
+		//Reverse the boxes so that fill the grid with biggest boxes first
+		$remainingBox = array_reverse($boxes);
 
 		while(count($remainingBox) != 0) {
 
