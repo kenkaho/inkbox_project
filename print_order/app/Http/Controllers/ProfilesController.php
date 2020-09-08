@@ -20,14 +20,9 @@ class ProfilesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($user)
+    public function index()
     {
-	    if($user != auth()->user()->id){
-
-		    return view('welcome');
-	    }
-
-	    $user = User::find($user);
+	    $user = auth()->user();
 	    $orders = Order::where('customer_id', $user->id)->orderBy('created_at', 'DESC')->get();
 
 	    $orderList = [];
