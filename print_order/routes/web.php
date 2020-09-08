@@ -19,15 +19,11 @@ Route::get('/', function () {
 
 Auth::routes();
 
-//This line need to be fix, but for now just passing the user id, since only 1 user to test
-Route::get('/', function () { return Redirect::to('profiles/1');});
-
 Route::get('/profiles', 'ProfilesController@index')->name('profiles');
 
 Route::get('/order/create', 'OrdersController@create');
 Route::post('/order', 'OrdersController@store');
 
-Route::get('/profiles/{user}', 'ProfilesController@index')->name('profiles.show');
 
 Route::get('/printOrder', 'PrintOrdersController@index');
 Route::post('/printOrder', 'PrintOrdersController@store');

@@ -12,7 +12,10 @@ use DB;
 class OrdersController extends Controller
 {
 
-
+	public function __construct()
+	{
+		$this->middleware('auth');
+	}
 
     /**
      * Display a listing of the resource.
@@ -114,7 +117,7 @@ class OrdersController extends Controller
 		    }
 	    }
 
-	    return redirect('profiles/'.$user->id);
+	    return redirect('profiles');
     }
 
     /**
