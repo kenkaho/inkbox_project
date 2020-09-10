@@ -16,7 +16,7 @@ button to print the order.  When printing for the first time, it will create th
 The algorithm that generates the x_pos, y_pos, width, and height for each item happens when the "Print Order" button first hits.
 
 For printing the Grid, I was trying to use vue.js to do it at the beginning but spent more than 30 minutes to try to get it working but no success so I use the 
-CSS Grid system to draw the product boxes into the Grid instead.  But sometimes there is a problem with the size of the box when the first load, if it looks weird (overlapping) by reloading the page then it should fix the issues, the boxes may get resize but it should not overlap.
+CSS Grid system to draw the product boxes into the Grid instead.
 
 
 # Getting started
