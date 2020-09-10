@@ -2,7 +2,7 @@
 
 I have installed the auth feature for Laravel to practice the auth flow, therefore it will ask to log in before you are able to hit the home page.
 
-Create a new user, then it should redirect you to http://localhost:8000/profiles/1 if not please hit the home page with the link.
+Create a new user, then it should redirect you to the order listing page
 
 At the user home page I have display the list of orders that created by the user, I have created the seeder to import 50 orders and order items with it,
 therefore you should see 50 orders on this page.  Hit add orders to create additional order with the set products that created from the product seeder.  
@@ -13,7 +13,7 @@ Once submitted the order it will redirect the user back to the home page which i
 it will include the order id, order total cost based on the product prices, and the list of products.  Hit the blue "Print Order" 
 button to print the order.  When printing for the first time, it will create the print sheet and print sheet items based on the order items data.  Once the print sheet is generated the next time to view the sheet it will directly load the data previously generated to save the database resources.
 
-The algorithm that generates the x_pos, y_pos, width, and height for each item happens when the "Print Order" button first hits.  I should have done a better job when writing this algorithm, it can be improved and make it more efficient with reducing the loops and make it less duplicate codes, I was running out of time to improve it, but it seems the algorithm works pretty well.  I may improve it in version 2.0 :)
+The algorithm that generates the x_pos, y_pos, width, and height for each item happens when the "Print Order" button first hits.
 
 For printing the Grid, I was trying to use vue.js to do it at the beginning but spent more than 30 minutes to try to get it working but no success so I use the 
 CSS Grid system to draw the product boxes into the Grid instead.  But sometimes there is a problem with the size of the box when the first load, if it looks weird (overlapping) by reloading the page then it should fix the issues, the boxes may get resize but it should not overlap.
