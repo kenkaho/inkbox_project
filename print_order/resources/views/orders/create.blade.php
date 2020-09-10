@@ -29,7 +29,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="row pt-3 float-righ">
+                    <div class="row pt-3 float-right">
                         <button class="btn btn-primary">Add order</button>
 
                     </div>

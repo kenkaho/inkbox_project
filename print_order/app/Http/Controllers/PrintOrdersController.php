@@ -98,32 +98,11 @@ class PrintOrdersController extends Controller
 			    $sheetsResult[] = $sheetItems;
 		    }
 
-		    return view('prints.index',['sheets' => $sheetsResult, 'orderNumber' => $orderNumber]);
 	    }
-	    else {
 
-			try {
-				$printSheetItems = DB::table('print_sheet_item')->join('orders_items', 'print_sheet_item.order_item_id', '=', 'orders_items.order_item_id')->whereIn('print_sheet_item.order_item_id', $orderItemsIds)->get();
+	    $sheets = $this->printSheet($orderItemsIds);
 
-			}
-			catch (\Exception $ex){
-				dd('Exception block', $ex);
-			}
-
-		    foreach($printSheetItems as $printSheetItem){
-
-			    $productTitle = $this->getProductTitleById($printSheetItem->product_id);
-
-			    $Sheets[$printSheetItem->identifier][] = ['x_pos' => $printSheetItem->x_pos,
-				    'y_pos' => $printSheetItem->y_pos,
-				    'width' => $printSheetItem->width,
-				    'height' => $printSheetItem->height,
-				    'size' => $printSheetItem->size,
-			        'productTitle' => $productTitle];
-		    }
-
-		    return view('prints.index',['sheets' => $Sheets, 'orderNumber' => $orderNumber]);
-	    }
+	    return view('prints.index',['sheets' => $sheets, 'orderNumber' => $orderNumber]);
     }
 
     /**
@@ -433,5 +412,29 @@ class PrintOrdersController extends Controller
 		}
 
 		return $productData[0]->title;
+	}
+
+	private function printSheet($orderItemsIds){
+		try {
+			$printSheetItems = DB::table('print_sheet_item')->join('orders_items', 'print_sheet_item.order_item_id', '=', 'orders_items.order_item_id')->whereIn('print_sheet_item.order_item_id', $orderItemsIds)->get();
+
+		}
+		catch (\Exception $ex){
+			dd('Exception block', $ex);
+		}
+
+		foreach($printSheetItems as $printSheetItem){
+
+			$productTitle = $this->getProductTitleById($printSheetItem->product_id);
+
+			$Sheets[$printSheetItem->identifier][] = ['x_pos' => $printSheetItem->x_pos,
+				'y_pos' => $printSheetItem->y_pos,
+				'width' => $printSheetItem->width,
+				'height' => $printSheetItem->height,
+				'size' => $printSheetItem->size,
+				'productTitle' => $productTitle];
+		}
+
+		return $Sheets;
 	}
 }

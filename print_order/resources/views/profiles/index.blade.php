@@ -9,7 +9,7 @@
                 <a href="/order/create">Create Order</a>
             </div>
             <div class="col-md-10">
-                @foreach($orders as $order)
+                @forea``````ch($orders as $order)
                     <div class="pt-lg-5">
                         <label><h3>Order id: {{ $order[0]->order_number }} | Total Cost: ${{ $order[0]->total_price }}</h3></label>
                         <ul class="list-group">
