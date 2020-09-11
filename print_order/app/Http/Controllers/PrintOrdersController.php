@@ -416,7 +416,7 @@ class PrintOrdersController extends Controller
 
 	private function printSheet($orderItemsIds){
 		try {
-			$printSheetItems = DB::table('print_sheet_item')->join('orders_items', 'print_sheet_item.order_item_id', '=', 'orders_items.order_item_id')->whereIn('print_sheet_item.order_item_id', $orderItemsIds)->get();
+			$printSheetItems = DB::table('print_sheet_item')->join('orders_items', 'print_sheet_item.order_item_id', '=', 'orders_items.order_item_id')->whereIn('print_sheet_item.order_item_id', $orderItemsIds)->orderBy('identifier','ASC')->get();
 
 		}
 		catch (\Exception $ex){

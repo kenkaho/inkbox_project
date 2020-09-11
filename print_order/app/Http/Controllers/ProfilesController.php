@@ -23,6 +23,7 @@ class ProfilesController extends Controller
     public function index()
     {
 	    $user = auth()->user();
+
 	    $orders = Order::where('customer_id', $user->id)->orderBy('created_at', 'DESC')->get();
 
 	    $orderList = [];
